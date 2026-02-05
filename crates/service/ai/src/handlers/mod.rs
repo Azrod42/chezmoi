@@ -1,5 +1,4 @@
 pub(crate) mod ai;
-pub(crate) mod health;
 
 use lambda_http::{
     http::{Method, StatusCode},
@@ -15,10 +14,6 @@ pub(crate) async fn router(req: Request, state: Arc<State>) -> Result<Response<B
             .status(StatusCode::NO_CONTENT)
             .body(Body::Empty)
             .unwrap());
-    }
-
-    if req.uri().path() == health::PATH {
-        return health::handle(req, state).await;
     }
 
     let req = match auth_middleware::with_user(req, state.pool()).await {
