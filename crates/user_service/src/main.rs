@@ -152,8 +152,8 @@ async fn login(req: Request, state: Arc<State>) -> Result<Response<Body>, Error>
         return Ok(err(StatusCode::UNAUTHORIZED, "invalid credentials"));
     }
 
-    let token = issue_jwt(&user_id, &payload.email)
-        .map_err(|_| lambda_http::Error::from("jwt error"))?;
+    let token =
+        issue_jwt(&user_id, &payload.email).map_err(|_| lambda_http::Error::from("jwt error"))?;
 
     let ttl = shared::ttl_seconds();
     Ok(json(
@@ -197,10 +197,6 @@ async fn main() -> Result<(), Error> {
         .await
         .expect("failed to connect to postgres");
 
-    ensure_schema(&pool)
-        .await
-        .expect("failed to ensure schema");
-
     info!("user_service started");
 
     let state = Arc::new(State { pool });
@@ -210,21 +206,4 @@ async fn main() -> Result<(), Error> {
         async move { handler(req, state).await }
     }))
     .await
-}
-
-async fn ensure_schema(pool: &PgPool) -> Result<(), sqlx::Error> {
-    sqlx::query(
-        r#"
-        CREATE TABLE IF NOT EXISTS users (
-            id uuid PRIMARY KEY,
-            email text NOT NULL UNIQUE,
-            password_hash text NOT NULL,
-            created_at timestamptz NOT NULL DEFAULT now()
-        )
-        "#,
-    )
-    .execute(pool)
-    .await?;
-
-    Ok(())
 }

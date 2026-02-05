@@ -1,45 +1,42 @@
+lambda_role := "arn:aws:iam::977069300030:role/lambda-role"
+
 watch:
     pass-cli run --env-file .env.local -- cargo lambda watch
 
+build package:
+    cargo lambda build --release --arm64 --package {{package}}
+
 build-user:
-    cargo lambda build --release --arm64 --package user_service
+    just build user_service
+
+migrate-user:
+    sqlx migrate run --source crates/db_migrations/migrations
 
 build-ai:
-    cargo lambda build --release --arm64 --package ai_service
+    just build ai_service
+
+deploy package binary function:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    umask 077
+    tmp_env="$(mktemp)"
+    # trap 'rm -f "$tmp_env"' EXIT
+
+    pass-cli inject --in-file .env.deploy --out-file "$tmp_env" --force
+
+    just build {{package}}
+
+    cargo lambda deploy \
+      --binary-name {{binary}} {{function}} \
+      --enable-function-url \
+      --env-file "$tmp_env" \
+      --role {{lambda_role}}
 
 deploy-user:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    umask 077
-    tmp_env="$(mktemp)"
-    # trap 'rm -f "$tmp_env"' EXIT
-
-    pass-cli inject --in-file .env.deploy --out-file "$tmp_env" --force
-
-    cargo lambda build --release --arm64 --package user_service
-
-    cargo lambda deploy \
-      --binary-name user_service user-service \
-      --enable-function-url \
-      --env-file "$tmp_env" \
-      --role arn:aws:iam::977069300030:role/lambda-role
+    just deploy user_service user_service user-service
 
 deploy-ai:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    umask 077
-    tmp_env="$(mktemp)"
-    # trap 'rm -f "$tmp_env"' EXIT
-
-    pass-cli inject --in-file .env.deploy --out-file "$tmp_env" --force
-
-    cargo lambda build --release --arm64 --package ai_service
-
-    cargo lambda deploy \
-      --binary-name ai_service ai-service \
-      --enable-function-url \
-      --env-file "$tmp_env" \
-      --role arn:aws:iam::977069300030:role/lambda-role
+    just deploy ai_service ai_service ai-service
 
 autorize:
   aws lambda update-function-url-config \
@@ -55,5 +52,3 @@ public:
   --principal "*" \
   --function-url-auth-type NONE \
   --region eu-west-3
-
-

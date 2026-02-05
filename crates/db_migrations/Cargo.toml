@@ -1,0 +1,7 @@
+[package]
+name = "db_migrations"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio", "tls-rustls", "migrate"] }

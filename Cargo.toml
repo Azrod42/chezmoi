@@ -4,5 +4,6 @@ members = [
     "crates/user_service",
     "crates/ai_service",
     "crates/jwt_validation",
+    "crates/db_migrations",
 ]
 resolver = "2"
