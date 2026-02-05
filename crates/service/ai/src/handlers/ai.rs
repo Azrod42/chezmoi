@@ -1,7 +1,11 @@
+use async_openai::{
+    config::OpenAIConfig,
+    types::{ChatCompletionRequestUserMessageArgs, CreateChatCompletionRequestArgs},
+    Client,
+};
 use lambda_http::{http::StatusCode, Body, Error, Request, Response};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use uuid::Uuid;
 
 use crate::State;
 
@@ -14,6 +18,13 @@ pub(crate) const PATH: &str = "/ai";
 #[derive(Debug, Deserialize)]
 struct AiRequest {
     prompt: String,
+    model: String,
+}
+
+#[derive(Debug, Serialize)]
+struct AiResponse {
+    model: String,
+    answer: String,
 }
 
 pub(crate) async fn handle(req: Request, _state: Arc<State>) -> Result<Response<Body>, Error> {
@@ -23,18 +34,46 @@ pub(crate) async fn handle(req: Request, _state: Arc<State>) -> Result<Response<
         .ok_or_else(|| lambda_http::Error::from("missing auth context"))?
         .clone();
 
+    let api_key = user
+        .api_key
+        .clone()
+        .or_else(|| std::env::var("OPENROUTER_API_KEY").ok())
+        .ok_or_else(|| lambda_http::Error::from("missing openrouter api key"))?;
+
     let payload: AiRequest = serde_json::from_slice(&body_bytes(req.body()))
         .map_err(|_| lambda_http::Error::from("invalid json"))?;
+    let prompt = payload.prompt;
+    let model = payload.model;
+
+    let config = OpenAIConfig::new()
+        .with_api_key(api_key)
+        .with_api_base("https://openrouter.ai/api/v1");
+    let client = Client::with_config(config);
+
+    let message = ChatCompletionRequestUserMessageArgs::default()
+        .content(prompt)
+        .build()
+        .map_err(|_| lambda_http::Error::from("invalid chat request"))?;
+    let request = CreateChatCompletionRequestArgs::default()
+        .model(model.clone())
+        .messages([message.into()])
+        .build()
+        .map_err(|_| lambda_http::Error::from("invalid chat request"))?;
+
+    let response = client
+        .chat()
+        .create(request)
+        .await
+        .map_err(|_| lambda_http::Error::from("openrouter error"))?;
+
+    let answer = response
+        .choices
+        .first()
+        .and_then(|choice| choice.message.content.clone())
+        .unwrap_or_default();
 
     Ok(json(
         StatusCode::OK,
-        serde_json::json!({
-          "id": format!("req-{}", Uuid::new_v4()),
-          "model": "mock-1",
-          "user_id": user.id.to_string(),
-          "email": user.email,
-          "input_prompt_len": payload.prompt.len(),
-          "answer": "Ceci est une réponse mockée (PoC)."
-        }),
+        serde_json::to_value(AiResponse { model, answer }).unwrap(),
     ))
 }

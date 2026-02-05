@@ -69,6 +69,11 @@ resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.http.id
   name        = "$default"
   auto_deploy = true
+
+  default_route_settings {
+    throttling_burst_limit = 1
+    throttling_rate_limit  = 0.33
+  }
 }
 
 # Autoriser API Gateway à invoquer les Lambdas

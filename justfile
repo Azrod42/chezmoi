@@ -9,7 +9,7 @@ build package:
 build-user:
     just build user
 
-migrate-user:
+migrate:
     sqlx migrate run --source crates/db_migrations/migrations
 
 build-ai:
