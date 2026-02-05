@@ -1,0 +1,10 @@
+[package]
+name = "auth_middleware"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+lambda_http = "1.0.2"
+sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio", "tls-rustls", "uuid"] }
+uuid = { version = "1", features = ["v4"] }
+shared = { path = "../shared" }

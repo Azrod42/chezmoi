@@ -7,13 +7,13 @@ build package:
     cargo lambda build --release --arm64 --package {{package}}
 
 build-user:
-    just build user_service
+    just build user
 
 migrate-user:
     sqlx migrate run --source crates/db_migrations/migrations
 
 build-ai:
-    just build ai_service
+    just build ai
 
 deploy package binary function:
     #!/usr/bin/env bash
@@ -33,10 +33,12 @@ deploy package binary function:
       --role {{lambda_role}}
 
 deploy-user:
-    just deploy user_service user_service user-service
+    just deploy user user user-service
 
 deploy-ai:
-    just deploy ai_service ai_service ai-service
+    just deploy ai ai ai-service
+
+deploy-all: deploy-user deploy-ai
 
 autorize:
   aws lambda update-function-url-config \

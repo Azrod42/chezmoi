@@ -17,7 +17,7 @@ locals {
 # API Gateway HTTP API (v2)
 # -------------------------
 resource "aws_apigatewayv2_api" "http" {
-  name          = "poc-http"
+  name          = "cealum"
   protocol_type = "HTTP"
 
   cors_configuration {
@@ -50,6 +50,12 @@ resource "aws_apigatewayv2_route" "register" {
 resource "aws_apigatewayv2_route" "login" {
   api_id    = aws_apigatewayv2_api.http.id
   route_key = "POST /login"
+  target    = "integrations/${aws_apigatewayv2_integration.user.id}"
+}
+
+resource "aws_apigatewayv2_route" "user_health" {
+  api_id    = aws_apigatewayv2_api.http.id
+  route_key = "GET /user/health"
   target    = "integrations/${aws_apigatewayv2_integration.user.id}"
 }
 

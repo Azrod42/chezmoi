@@ -1,9 +1,46 @@
-use anyhow::Result;
-use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
+use anyhow::{anyhow, Result};
+use jsonwebtoken::{
+    decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation,
+};
+use serde::{Deserialize, Serialize};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-pub use jwt_validation::ttl_seconds;
-use jwt_validation::{issuer, jwt_secret, Claims};
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Claims {
+    pub sub: String,
+    pub email: String,
+    pub iss: String,
+    pub exp: usize,
+}
+
+pub fn issuer() -> String {
+    std::env::var("JWT_ISSUER").unwrap_or_else(|_| "poc".to_string())
+}
+
+pub fn ttl_seconds() -> u64 {
+    std::env::var("JWT_TTL_SECONDS")
+        .ok()
+        .and_then(|s| s.parse::<u64>().ok())
+        .unwrap_or(3600)
+}
+
+pub fn jwt_secret() -> Result<String> {
+    std::env::var("JWT_SECRET").map_err(|_| anyhow!("JWT_SECRET missing"))
+}
+
+pub fn verify_jwt(token: &str) -> Result<Claims> {
+    let secret = jwt_secret()?;
+    let mut validation = Validation::new(Algorithm::HS256);
+    validation.set_issuer(&[issuer()]);
+
+    let data = decode::<Claims>(
+        token,
+        &DecodingKey::from_secret(secret.as_bytes()),
+        &validation,
+    )?;
+
+    Ok(data.claims)
+}
 
 fn now_epoch_seconds() -> u64 {
     SystemTime::now()

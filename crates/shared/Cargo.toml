@@ -6,4 +6,4 @@ edition = "2021"
 [dependencies]
 jsonwebtoken = { version = "10.3", default-features = false, features = ["rust_crypto"] }
 anyhow = "1"
-jwt_validation = { path = "../jwt_validation" }
+serde = { version = "1", features = ["derive"] }

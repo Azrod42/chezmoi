@@ -1,9 +1,10 @@
 [workspace]
 members = [
     "crates/shared",
-    "crates/user_service",
-    "crates/ai_service",
-    "crates/jwt_validation",
+    "crates/service/user",
+    "crates/service/ai",
     "crates/db_migrations",
+    "crates/auth_middleware",
+    "crates/http_utils",
 ]
 resolver = "2"

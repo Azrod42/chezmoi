@@ -1,5 +1,5 @@
 [package]
-name = "ai_service"
+name = "user"
 version = "0.1.0"
 edition = "2021"
 
@@ -14,7 +14,13 @@ anyhow = "1"
 tracing = "0.1"
 tracing-subscriber = "0.3"
 
-jwt_validation = { path = "../jwt_validation" }
+argon2 = "0.5"
+password-hash = "0.5"
+rand_core = "0.6"
+
+shared = { path = "../../shared" }
+db_migrations = { path = "../../db_migrations" }
+http_utils = { path = "../../http_utils" }
 
 [package.metadata.lambda.deploy]
 timeout = 15
