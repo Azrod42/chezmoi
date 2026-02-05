@@ -3,6 +3,18 @@ variable "region" {
   default = "eu-west-3"
 }
 
+# Route53 zone (public) where records will be created.
+variable "route53_zone_name" {
+  type    = string
+  default = "cealum.dev"
+}
+
+# If set, Terraform will use this zone ID instead of looking up by name.
+variable "route53_zone_id" {
+  type    = string
+  default = ""
+}
+
 # Custom domain pour l'API (recommandé: api.cealum.dev)
 variable "api_domain_name" {
   type    = string

@@ -23,7 +23,7 @@ output "acm_dns_validation_records" {
 
 output "custom_domain_dns_target" {
   value = {
-    record_type    = "CNAME"
+    record_type    = "A (ALIAS)"
     name           = var.api_domain_name
     target         = aws_apigatewayv2_domain_name.custom.domain_name_configuration[0].target_domain_name
     hosted_zone_id = aws_apigatewayv2_domain_name.custom.domain_name_configuration[0].hosted_zone_id
