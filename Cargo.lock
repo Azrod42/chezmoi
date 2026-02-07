@@ -3433,6 +3433,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "argon2",
+ "auth_middleware",
  "db_migrations",
  "http_utils",
  "lambda_http",

@@ -11,6 +11,8 @@ pub struct Cli {
 pub enum Commands {
     Login(LoginArgs),
     Register(RegisterArgs),
+    ChangePassword(ChangePasswordArgs),
+    Logout,
     #[command(alias = "a")]
     Ask(AskArgs),
     #[command(alias = "t")]
@@ -34,6 +36,14 @@ pub struct RegisterArgs {
     pub email: Option<String>,
     #[arg(long)]
     pub password: Option<String>,
+}
+
+#[derive(Args)]
+pub struct ChangePasswordArgs {
+    #[arg(long = "current-password")]
+    pub current_password: Option<String>,
+    #[arg(long = "new-password")]
+    pub new_password: Option<String>,
 }
 
 #[derive(Args)]

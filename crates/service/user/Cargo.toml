@@ -21,6 +21,7 @@ rand_core = "0.6"
 shared = { path = "../../shared" }
 db_migrations = { path = "../../db_migrations" }
 http_utils = { path = "../../http_utils" }
+auth_middleware = { path = "../../auth_middleware" }
 
 [package.metadata.lambda.deploy]
 timeout = 15

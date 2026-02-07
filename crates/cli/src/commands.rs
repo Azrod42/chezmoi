@@ -2,8 +2,8 @@ use anyhow::{anyhow, bail, Result};
 
 use crate::api::{self, Function};
 use crate::cli::{
-    AskArgs, Commands, ConfigArgs, ConfigCommand, ConfigSetArgs, CorrectArgs, LoginArgs,
-    ModelTarget, RegisterArgs, TranslateArgs,
+    AskArgs, ChangePasswordArgs, Commands, ConfigArgs, ConfigCommand, ConfigSetArgs, CorrectArgs,
+    LoginArgs, ModelTarget, RegisterArgs, TranslateArgs,
 };
 use crate::config::{
     self, AuthConfig, DEFAULT_ASK_MODEL, DEFAULT_CORRECT_MODEL, DEFAULT_TRANSLATE_MODEL,
@@ -16,6 +16,8 @@ pub async fn run(command: Commands) -> Result<()> {
     match command {
         Commands::Login(args) => login(args).await,
         Commands::Register(args) => register(args).await,
+        Commands::ChangePassword(args) => change_password(args).await,
+        Commands::Logout => logout(),
         Commands::Ask(args) => ask(args).await,
         Commands::Translate(args) => translate(args).await,
         Commands::Correct(args) => correct(args).await,
@@ -65,6 +67,38 @@ async fn register(args: RegisterArgs) -> Result<()> {
 
     let payload = api::register_request(&email, &password).await?;
     println!("Registered {} ({})", payload.email, payload.id);
+    Ok(())
+}
+
+async fn change_password(args: ChangePasswordArgs) -> Result<()> {
+    let current_password = match args.current_password {
+        Some(password) => password,
+        None => rpassword::prompt_password("Current password: ")?,
+    };
+    let new_password = match args.new_password {
+        Some(password) => password,
+        None => rpassword::prompt_password("New password: ")?,
+    };
+
+    if new_password.len() < 8 {
+        bail!("password too short (min 8)");
+    }
+
+    let token = config::auth_token()?;
+    api::change_password_request(&current_password, &new_password, &token).await?;
+    println!("Password updated.");
+    Ok(())
+}
+
+fn logout() -> Result<()> {
+    let mut config = config::load_config()?;
+    if config.auth.is_none() {
+        println!("Already logged out.");
+        return Ok(());
+    }
+    config.auth = None;
+    config::save_config(&config)?;
+    println!("Logged out.");
     Ok(())
 }
 

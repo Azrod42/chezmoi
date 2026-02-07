@@ -53,6 +53,12 @@ resource "aws_apigatewayv2_route" "login" {
   target    = "integrations/${aws_apigatewayv2_integration.user.id}"
 }
 
+resource "aws_apigatewayv2_route" "change_password" {
+  api_id    = aws_apigatewayv2_api.http.id
+  route_key = "POST /change-password"
+  target    = "integrations/${aws_apigatewayv2_integration.user.id}"
+}
+
 resource "aws_apigatewayv2_route" "user_health" {
   api_id    = aws_apigatewayv2_api.http.id
   route_key = "GET /user/health"

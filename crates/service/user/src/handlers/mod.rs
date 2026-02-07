@@ -1,4 +1,5 @@
 pub(crate) mod auth;
+pub(crate) mod change_password;
 pub(crate) mod health;
 pub(crate) mod login;
 pub(crate) mod register;
@@ -17,6 +18,14 @@ pub(crate) async fn router(req: Request, state: Arc<State>) -> Result<Response<B
             .status(StatusCode::NO_CONTENT)
             .body(Body::Empty)
             .unwrap());
+    }
+
+    if req.method() == Method::POST && req.uri().path() == change_password::PATH {
+        let req = match auth_middleware::with_user(req, state.pool()).await {
+            Ok(req) => req,
+            Err(auth_err) => return Ok(err(auth_err.status, auth_err.message)),
+        };
+        return change_password::handle(req, state).await;
     }
 
     match (req.method(), req.uri().path()) {

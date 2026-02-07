@@ -31,6 +31,12 @@ struct WriterRequest {
 }
 
 #[derive(Debug, Serialize)]
+struct ChangePasswordRequest {
+    current_password: String,
+    new_password: String,
+}
+
+#[derive(Debug, Serialize)]
 #[allow(clippy::upper_case_acronyms)]
 pub enum Function {
     TRANSLATE,
@@ -86,6 +92,33 @@ pub async fn register_request(email: &str, password: &str) -> Result<RegisterRes
 
     let payload: RegisterResponse = response.json().await.context("invalid register response")?;
     Ok(payload)
+}
+
+pub async fn change_password_request(
+    current_password: &str,
+    new_password: &str,
+    token: &str,
+) -> Result<()> {
+    let client = reqwest::Client::new();
+    let url = format!("{}/change-password", api_base_url());
+    let response = client
+        .post(url)
+        .bearer_auth(token)
+        .json(&ChangePasswordRequest {
+            current_password: current_password.to_string(),
+            new_password: new_password.to_string(),
+        })
+        .send()
+        .await
+        .context("change password request failed")?;
+
+    if !response.status().is_success() {
+        let status = response.status();
+        let body = response.text().await.unwrap_or_default();
+        bail!("change password failed ({status}): {body}");
+    }
+
+    Ok(())
 }
 
 pub async fn ai_writer(
