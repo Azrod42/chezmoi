@@ -65,6 +65,12 @@ resource "aws_apigatewayv2_route" "ai_writer" {
   target    = "integrations/${aws_apigatewayv2_integration.ai.id}"
 }
 
+resource "aws_apigatewayv2_route" "ai" {
+  api_id    = aws_apigatewayv2_api.http.id
+  route_key = "POST /ai"
+  target    = "integrations/${aws_apigatewayv2_integration.ai.id}"
+}
+
 resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.http.id
   name        = "$default"

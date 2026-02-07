@@ -1,4 +1,5 @@
 pub(crate) mod ai;
+pub(crate) mod writer;
 
 use lambda_http::{
     http::{Method, StatusCode},
@@ -22,6 +23,7 @@ pub(crate) async fn router(req: Request, state: Arc<State>) -> Result<Response<B
     };
 
     match (req.method(), req.uri().path()) {
+        (&Method::POST, writer::PATH) => writer::handle(req, state).await,
         (&Method::POST, ai::PATH) => ai::handle(req, state).await,
         _ => Ok(err(StatusCode::NOT_FOUND, "not found")),
     }

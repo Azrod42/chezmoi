@@ -5,9 +5,7 @@ use crate::cli::{
     Commands, ConfigArgs, ConfigCommand, ConfigSetArgs, CorrectArgs, LoginArgs, ModelTarget,
     RegisterArgs, TranslateArgs,
 };
-use crate::config::{
-    self, AuthConfig, DEFAULT_CORRECT_MODEL, DEFAULT_TRANSLATE_MODEL,
-};
+use crate::config::{self, AuthConfig, DEFAULT_CORRECT_MODEL, DEFAULT_TRANSLATE_MODEL};
 use crate::output::print_answer;
 use crate::ui::prompt;
 use crate::util::now_epoch_seconds;
@@ -16,6 +14,7 @@ pub async fn run(command: Commands) -> Result<()> {
     match command {
         Commands::Login(args) => login(args).await,
         Commands::Register(args) => register(args).await,
+        Commands::Ask(args) => ask(args).await,
         Commands::Translate(args) => translate(args).await,
         Commands::Correct(args) => correct(args).await,
         Commands::Config(args) => config(args),
@@ -67,6 +66,16 @@ async fn register(args: RegisterArgs) -> Result<()> {
     Ok(())
 }
 
+async fn ask(args: TranslateArgs) -> Result<()> {
+    let prompt = args.text.join(" ");
+    let model = config::model_for(ModelTarget::Ask)?;
+    let token = config::auth_token()?;
+    let response =
+        api::ai_request(Function::TRANSLATE, &args.language, &prompt, &model, &token).await?;
+    print_answer(&response.answer, args.format);
+    Ok(())
+}
+
 async fn translate(args: TranslateArgs) -> Result<()> {
     let prompt = args.text.join(" ");
     let model = config::model_for(ModelTarget::Translate)?;
@@ -99,6 +108,7 @@ fn config_set(args: ConfigSetArgs) -> Result<()> {
     match args.target {
         ModelTarget::Translate => config.models.translate = Some(args.model),
         ModelTarget::Correct => config.models.correct = Some(args.model),
+        ModelTarget::Ask => config.models.ask = Some(args.model),
     }
     config::save_config(&config)?;
     println!("Model updated.");

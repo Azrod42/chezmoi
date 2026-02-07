@@ -11,6 +11,8 @@ pub struct Cli {
 pub enum Commands {
     Login(LoginArgs),
     Register(RegisterArgs),
+    #[command(alias = "a")]
+    Ask(TranslateArgs),
     #[command(alias = "t")]
     Translate(TranslateArgs),
     #[command(alias = "c")]
@@ -32,6 +34,14 @@ pub struct RegisterArgs {
     pub email: Option<String>,
     #[arg(long)]
     pub password: Option<String>,
+}
+
+#[derive(Args)]
+pub struct AskArgs {
+    #[arg(required = true, num_args = 0..)]
+    pub text: Vec<String>,
+    #[arg(long, default_value_t = true)]
+    pub format: bool,
 }
 
 #[derive(Args)]
@@ -72,6 +82,8 @@ pub struct ConfigSetArgs {
 
 #[derive(Clone, Copy, Debug, ValueEnum)]
 pub enum ModelTarget {
+    #[value(alias = "a")]
+    Ask,
     #[value(alias = "t")]
     Translate,
     #[value(alias = "c")]

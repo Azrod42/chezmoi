@@ -9,6 +9,7 @@ use crate::util::now_epoch_seconds;
 
 pub const DEFAULT_TRANSLATE_MODEL: &str = "morph/morph-v3-large:nitro";
 pub const DEFAULT_CORRECT_MODEL: &str = "morph/morph-v3-large:nitro";
+pub const DEFAULT_ASK_MODEL: &str = "morph/morph-v3-large:nitro";
 
 #[derive(Default, Debug, Serialize, Deserialize)]
 pub struct Config {
@@ -24,6 +25,7 @@ pub struct AuthConfig {
 
 #[derive(Default, Debug, Serialize, Deserialize)]
 pub struct ModelsConfig {
+    pub ask: Option<String>,
     pub translate: Option<String>,
     pub correct: Option<String>,
 }
@@ -63,6 +65,10 @@ pub fn auth_token() -> Result<String> {
 pub fn model_for(target: ModelTarget) -> Result<String> {
     let config = load_config()?;
     let model = match target {
+        ModelTarget::Ask => config
+            .models
+            .correct
+            .unwrap_or_else(|| DEFAULT_ASK_MODEL.to_string()),
         ModelTarget::Translate => config
             .models
             .translate
