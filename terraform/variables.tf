@@ -38,3 +38,15 @@ variable "ai_lambda_name" {
   type    = string
   default = "ai-service"
 }
+
+# Nom du rôle IAM d'exécution des Lambdas
+variable "lambda_role_name" {
+  type    = string
+  default = "lambda-role"
+}
+
+# Rétention des logs CloudWatch (en jours)
+variable "lambda_log_retention_days" {
+  type    = number
+  default = 14
+}

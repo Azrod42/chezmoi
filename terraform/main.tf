@@ -1,5 +1,8 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
+data "aws_iam_role" "lambda" {
+  name = var.lambda_role_name
+}
 
 data "aws_route53_zone" "primary" {
   count        = var.route53_zone_id == "" ? 1 : 0
@@ -11,6 +14,21 @@ locals {
   user_lambda_arn = "arn:aws:lambda:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:function:${var.user_lambda_name}"
   ai_lambda_arn   = "arn:aws:lambda:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:function:${var.ai_lambda_name}"
   route53_zone_id = var.route53_zone_id != "" ? var.route53_zone_id : data.aws_route53_zone.primary[0].zone_id
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role       = data.aws_iam_role.lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_cloudwatch_log_group" "user" {
+  name              = "/aws/lambda/${var.user_lambda_name}"
+  retention_in_days = var.lambda_log_retention_days
+}
+
+resource "aws_cloudwatch_log_group" "ai" {
+  name              = "/aws/lambda/${var.ai_lambda_name}"
+  retention_in_days = var.lambda_log_retention_days
 }
 
 # -------------------------

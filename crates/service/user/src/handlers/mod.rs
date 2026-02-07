@@ -8,32 +8,65 @@ use lambda_http::{
     http::{Method, StatusCode},
     Body, Error, Request, Response,
 };
+use lambda_http::RequestExt;
 use std::sync::Arc;
+use std::time::Instant;
 
 use crate::State;
 
 pub(crate) async fn router(req: Request, state: Arc<State>) -> Result<Response<Body>, Error> {
-    if req.method() == Method::OPTIONS {
-        return Ok(cors_headers(Response::builder())
+    let start = Instant::now();
+    let method = req.method().clone();
+    let path = req.uri().path().to_string();
+    let lambda_ctx = req.lambda_context_ref().cloned();
+    let mut user_id: Option<String> = None;
+
+    let result = if method == Method::OPTIONS {
+        Ok(cors_headers(Response::builder())
             .status(StatusCode::NO_CONTENT)
             .body(Body::Empty)
-            .unwrap());
-    }
+            .unwrap())
+    } else if method == Method::POST && path == change_password::PATH {
+        match auth_middleware::with_user(req, state.pool()).await {
+            Ok(req) => {
+                user_id = req
+                    .extensions()
+                    .get::<auth_middleware::AuthenticatedUser>()
+                    .map(|user| user.id.to_string());
+                change_password::handle(req, state).await
+            }
+            Err(auth_err) => Ok(err(auth_err.status, auth_err.message)),
+        }
+    } else {
+        match (method.clone(), path.as_str()) {
+            (Method::GET, health::PATH) => health::handle(req, state).await,
+            (Method::POST, register::PATH) => register::handle(req, state).await,
+            (Method::POST, login::PATH) => login::handle(req, state).await,
+            _ => Ok(err(StatusCode::NOT_FOUND, "not found")),
+        }
+    };
 
-    if req.method() == Method::POST && req.uri().path() == change_password::PATH {
-        let req = match auth_middleware::with_user(req, state.pool()).await {
-            Ok(req) => req,
-            Err(auth_err) => return Ok(err(auth_err.status, auth_err.message)),
-        };
-        return change_password::handle(req, state).await;
-    }
+    let duration_ms = start.elapsed().as_millis();
+    let request_id = lambda_ctx
+        .as_ref()
+        .map(|ctx| ctx.request_id.as_str())
+        .unwrap_or("unknown");
+    let xray_trace_id = lambda_ctx
+        .as_ref()
+        .and_then(|ctx| ctx.xray_trace_id.as_deref());
 
-    match (req.method(), req.uri().path()) {
-        (&Method::GET, health::PATH) => health::handle(req, state).await,
-        (&Method::POST, register::PATH) => register::handle(req, state).await,
-        (&Method::POST, login::PATH) => login::handle(req, state).await,
-        _ => Ok(err(StatusCode::NOT_FOUND, "not found")),
-    }
+    http_utils::log_http_result(
+        "user",
+        &method,
+        &path,
+        request_id,
+        xray_trace_id,
+        user_id.as_deref(),
+        duration_ms,
+        &result,
+    );
+
+    result
 }
 
 pub(crate) use http_utils::body_bytes;

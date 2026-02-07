@@ -1235,6 +1235,7 @@ version = "0.1.0"
 dependencies = [
  "lambda_http",
  "serde_json",
+ "tracing",
 ]
 
 [[package]]
