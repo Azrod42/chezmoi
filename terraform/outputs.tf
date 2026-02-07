@@ -7,7 +7,7 @@ output "custom_domain_base" {
 }
 
 output "custom_domain_example_paths" {
-  value = var.base_path != "" ? "https://${var.api_domain_name}/${var.base_path}/login  |  /register  |  /ai" : "https://${var.api_domain_name}/login  |  /register  |  /ai"
+  value = var.base_path != "" ? "https://${var.api_domain_name}/${var.base_path}/login  |  /register  |  /ai" : "https://${var.api_domain_name}/login  |  /register  |  /writer/ai"
 }
 
 output "acm_dns_validation_records" {

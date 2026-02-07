@@ -59,9 +59,9 @@ resource "aws_apigatewayv2_route" "user_health" {
   target    = "integrations/${aws_apigatewayv2_integration.user.id}"
 }
 
-resource "aws_apigatewayv2_route" "ai" {
+resource "aws_apigatewayv2_route" "ai_writer" {
   api_id    = aws_apigatewayv2_api.http.id
-  route_key = "POST /ai"
+  route_key = "POST /ai/writer"
   target    = "integrations/${aws_apigatewayv2_integration.ai.id}"
 }
 
