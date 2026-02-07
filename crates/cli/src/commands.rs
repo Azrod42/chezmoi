@@ -5,7 +5,9 @@ use crate::cli::{
     AskArgs, Commands, ConfigArgs, ConfigCommand, ConfigSetArgs, CorrectArgs, LoginArgs,
     ModelTarget, RegisterArgs, TranslateArgs,
 };
-use crate::config::{self, AuthConfig, DEFAULT_CORRECT_MODEL, DEFAULT_TRANSLATE_MODEL};
+use crate::config::{
+    self, AuthConfig, DEFAULT_ASK_MODEL, DEFAULT_CORRECT_MODEL, DEFAULT_TRANSLATE_MODEL,
+};
 use crate::output::print_answer;
 use crate::ui::prompt;
 use crate::util::now_epoch_seconds;
@@ -116,6 +118,11 @@ fn config_set(args: ConfigSetArgs) -> Result<()> {
 
 fn config_show() -> Result<()> {
     let config = config::load_config()?;
+    let ask = config
+        .models
+        .ask
+        .as_deref()
+        .unwrap_or(DEFAULT_ASK_MODEL);
     let translate = config
         .models
         .translate
@@ -126,6 +133,7 @@ fn config_show() -> Result<()> {
         .correct
         .as_deref()
         .unwrap_or(DEFAULT_CORRECT_MODEL);
+    println!("ask: {ask}");
     println!("translate: {translate}");
     println!("correct: {correct}");
     Ok(())

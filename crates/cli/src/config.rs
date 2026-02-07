@@ -67,7 +67,7 @@ pub fn model_for(target: ModelTarget) -> Result<String> {
     let model = match target {
         ModelTarget::Ask => config
             .models
-            .correct
+            .ask
             .unwrap_or_else(|| DEFAULT_ASK_MODEL.to_string()),
         ModelTarget::Translate => config
             .models

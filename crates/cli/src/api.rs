@@ -121,7 +121,7 @@ pub async fn ai_writer(
 }
 
 pub async fn ai(prompt: &str, model: &str, token: &str) -> Result<AiResponse> {
-    let url = format!("{}/ai/writer", api_base_url());
+    let url = format!("{}/ai", api_base_url());
     let client = reqwest::Client::new();
     let response = client
         .post(url)
