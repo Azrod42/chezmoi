@@ -19,6 +19,12 @@ pub struct RegisterResponse {
 #[derive(Debug, Serialize)]
 struct AiRequest {
     prompt: String,
+    model: String,
+}
+
+#[derive(Debug, Serialize)]
+struct WriterRequest {
+    prompt: String,
     language: String,
     function: Function,
     model: String,
@@ -82,7 +88,7 @@ pub async fn register_request(email: &str, password: &str) -> Result<RegisterRes
     Ok(payload)
 }
 
-pub async fn ai_request(
+pub async fn ai_writer(
     function: Function,
     language: &str,
     prompt: &str,
@@ -94,10 +100,34 @@ pub async fn ai_request(
     let response = client
         .post(url)
         .bearer_auth(token)
-        .json(&AiRequest {
+        .json(&WriterRequest {
             prompt: prompt.to_string(),
             language: language.to_string(),
             function,
+            model: model.to_string(),
+        })
+        .send()
+        .await
+        .context("ai request failed")?;
+
+    if !response.status().is_success() {
+        let status = response.status();
+        let body = response.text().await.unwrap_or_default();
+        bail!("ai request failed ({status}): {body}");
+    }
+
+    let payload: AiResponse = response.json().await.context("invalid ai response")?;
+    Ok(payload)
+}
+
+pub async fn ai(prompt: &str, model: &str, token: &str) -> Result<AiResponse> {
+    let url = format!("{}/ai/writer", api_base_url());
+    let client = reqwest::Client::new();
+    let response = client
+        .post(url)
+        .bearer_auth(token)
+        .json(&AiRequest {
+            prompt: prompt.to_string(),
             model: model.to_string(),
         })
         .send()

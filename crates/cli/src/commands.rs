@@ -2,8 +2,8 @@ use anyhow::{anyhow, bail, Result};
 
 use crate::api::{self, Function};
 use crate::cli::{
-    Commands, ConfigArgs, ConfigCommand, ConfigSetArgs, CorrectArgs, LoginArgs, ModelTarget,
-    RegisterArgs, TranslateArgs,
+    AskArgs, Commands, ConfigArgs, ConfigCommand, ConfigSetArgs, CorrectArgs, LoginArgs,
+    ModelTarget, RegisterArgs, TranslateArgs,
 };
 use crate::config::{self, AuthConfig, DEFAULT_CORRECT_MODEL, DEFAULT_TRANSLATE_MODEL};
 use crate::output::print_answer;
@@ -66,12 +66,11 @@ async fn register(args: RegisterArgs) -> Result<()> {
     Ok(())
 }
 
-async fn ask(args: TranslateArgs) -> Result<()> {
+async fn ask(args: AskArgs) -> Result<()> {
     let prompt = args.text.join(" ");
     let model = config::model_for(ModelTarget::Ask)?;
     let token = config::auth_token()?;
-    let response =
-        api::ai_request(Function::TRANSLATE, &args.language, &prompt, &model, &token).await?;
+    let response = api::ai(&prompt, &model, &token).await?;
     print_answer(&response.answer, args.format);
     Ok(())
 }
@@ -81,7 +80,7 @@ async fn translate(args: TranslateArgs) -> Result<()> {
     let model = config::model_for(ModelTarget::Translate)?;
     let token = config::auth_token()?;
     let response =
-        api::ai_request(Function::TRANSLATE, &args.language, &prompt, &model, &token).await?;
+        api::ai_writer(Function::TRANSLATE, &args.language, &prompt, &model, &token).await?;
     print_answer(&response.answer, args.format);
     Ok(())
 }
@@ -91,7 +90,7 @@ async fn correct(args: CorrectArgs) -> Result<()> {
     let model = config::model_for(ModelTarget::Correct)?;
     let token = config::auth_token()?;
     let response =
-        api::ai_request(Function::CORRECT, &args.language, &prompt, &model, &token).await?;
+        api::ai_writer(Function::CORRECT, &args.language, &prompt, &model, &token).await?;
     print_answer(&response.answer, args.format);
     Ok(())
 }

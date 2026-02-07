@@ -12,7 +12,7 @@ pub enum Commands {
     Login(LoginArgs),
     Register(RegisterArgs),
     #[command(alias = "a")]
-    Ask(TranslateArgs),
+    Ask(AskArgs),
     #[command(alias = "t")]
     Translate(TranslateArgs),
     #[command(alias = "c")]
