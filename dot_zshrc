@@ -1,0 +1,261 @@
+# zmodload zsh/zprof
+# ---- FAST ZSH ----
+
+# # Basic env
+export TERM=xterm-256color
+export EDITOR=nvim
+export GIT_EDITOR=nvim
+export OPENCODE_CONFIG="$HOME/.config/opencode/config.json"
+export ANDROID_HOME="$HOME/Android/Sdk"
+export BUN_INSTALL="$HOME/.bun"
+export TMUXIFIER_LAYOUT_PATH="$HOME/.config/tmux/layouts"
+export IDF_PATH="$HOME/esp/esp-idf"
+export STARSHIP_CONFIG="$HOME/.config/startship/starship.toml"
+#
+# # PATH (unique, ordered once)
+typeset -U path
+path=(
+  $HOME/bin
+  $HOME/.local/bin
+  $BUN_INSTALL/bin
+  /home/linuxbrew/.linuxbrew/bin
+  /home/linuxbrew/.linuxbrew/sbin
+  /usr/local/go/bin
+  $ANDROID_HOME/emulator
+  $ANDROID_HOME/platform-tools
+  $HOME/.tmuxifier/bin
+  $path
+)
+export PATH="$PATH:${path[*]}"
+#
+# If you really need brew shellenv vars, uncomment next block (slower):
+if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+# ---------- Completion (init early, cached, no compaudit) ----------
+# Must run BEFORE sourcing any file that uses compdef
+ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+mkdir -p "$ZSH_CACHE_DIR"
+zcompdump="$ZSH_CACHE_DIR/zcompdump-$ZSH_VERSION"
+
+# Speed up completion
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "$ZSH_CACHE_DIR"
+# Optional: skip host completion for speed
+zstyle ':completion:*' hosts off
+
+autoload -Uz compinit
+# -C skips compaudit (huge speedup). Re-run compaudit manually when you want.
+compinit -C -d "$zcompdump"
+#
+# ---------- Plugins / Completions ----------
+# zsh-autosuggestions (fast)
+# Optional tune: async suggestions
+export ZSH_AUTOSUGGEST_USE_ASYNC=1
+source "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+# bun completions (load AFTER compinit)
+[[ -s "$HOME/.bun/_bun" ]] && source "$HOME/.bun/_bun"
+
+# just completions (load AFTER compinit)
+[[ -r "$HOME/.just-completions.zsh" ]] && source "$HOME/.just-completions.zsh"
+
+# Lazy-load history-substring-search (costly otherwise)
+# Try common install paths without calling brew each shell
+for _hss in \
+  /home/linuxbrew/.linuxbrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh \
+  /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+do
+  [[ -r "$_hss" ]] && HSS_PATH="$_hss" && break
+done
+if [[ -n $HSS_PATH ]]; then
+  _hss_lazy() {
+    source "$HSS_PATH"
+    zle "$WIDGET" -- "$@" 2>/dev/null
+  }
+  zle -N history-substring-search-up _hss_lazy
+  zle -N history-substring-search-down _hss_lazy
+  # Arrow keys
+  bindkey '^[[A' history-substring-search-up
+  bindkey '^[[B' history-substring-search-down
+fi
+#
+# # Prompt
+eval "$(starship init zsh)"
+#
+# ---------- Tools (lazy where possible) ----------
+# nvm lazy-load + auto-use .nvmrc
+if [[ -d "$HOME/.nvm" ]]; then
+  export NVM_DIR="$HOME/.nvm"
+  load_nvm() {
+    [[ -s "$NVM_DIR/nvm.sh" ]] && . "$NVM_DIR/nvm.sh"
+    [[ -s "$NVM_DIR/bash_completion" ]] && . "$NVM_DIR/bash_completion"
+  }
+  nvm() { unset -f nvm; load_nvm; nvm "$@"; }
+  use_nvm_version() {
+    if [[ -f .nvmrc ]]; then
+      nvm use >/dev/null 2>&1 || { nvm install >/dev/null 2>&1 && nvm use >/dev/null 2>&1; }
+    fi
+  }
+  autoload -Uz add-zsh-hook
+  add-zsh-hook chpwd use_nvm_version
+fi
+
+# tmuxifier: init only when you actually run tmux or tmuxifier
+_tmuxifier_init() {
+  eval "$(command tmuxifier init -)"
+  unfunction _tmuxifier_init
+}
+tmuxifier() { _tmuxifier_init; command tmuxifier "$@"; }
+tmux() { _tmuxifier_init; command tmux "$@"; }
+#
+# # ---------- Aliases ----------
+alias ssnc='xrandr --output eDP --auto --left-of HDMI-A-1-0'
+alias sncOff='xrandr --output eDP --off'
+alias snc27='xrandr --output HDMI-A-1-0 --auto && xrandr --output eDP --off'
+alias snc27Off='xrandr --output HDMI-A-1-0 --off'
+alias 240='xrandr --output HDMI-0 --mode 1920x1080 --rate 240 && xrandr'
+alias screen-t="xrandr --output HDMI-2 --mode 1920x1080 --rate 120 --above DP-2 --auto --rotate normal"
+alias screen-b="xrandr --output DP-2 --mode 1920x1080 --rate 120 --below HDMI-2 --auto --rotate normal"
+alias screen-3="xrandr --output HDMI-1 --mode 1920x1080 --rate 120 --left-of DP-2 --auto --rotate normal"
+alias screen-share="xrandr --output HDMI-2 --mode 1920x1080 --rate 120 --same-as DP-2 && xrandr --output HDMI-2 --mode 1920x1080 --rate 120 --rotate inverted"
+alias screen-normal="screen-t && screen-b"
+
+
+# Common aliases
+alias tm=tmuxmenu
+alias top=bashtop
+alias e=exit
+alias c=clear
+alias x=exit
+alias xc="xclip -selection c && exit"
+alias copy="xclip -selection c"
+alias tra='ai t "'
+alias p=passmenu
+alias m=make
+alias ls="lsd"
+alias la="lsd -la"
+alias ccd="cd $HOME/SnC/web/"
+alias cccd="cd $HOME/Documents/Cealum/"
+alias cdRest="cd $HOME/Sync/work/rest/"
+
+alias ai='OPENAI_KEY=$(pass var/open-ai-key) ai'
+alias aiCheat='ai p cheat -p -a '
+
+bindkey -s ^f "~/.config/flash\n"
+bindkey -s ^g "tmux kill-server\n"
+bindkey -s ^t "tmux\n"
+
+# i3 shortcut
+alias bip='xset b off'
+
+alias getDocker='docker=$(docker ps | tail -1 | awk "{print $NF}")'
+alias lock="slock"
+
+# VPN
+alias vpn="openvpn3 session-start --dco true --config SNC"
+alias vpnoff="openvpn3 session-manage --disconnect --config SNC"
+alias vpnRestart="vpnoff && vpn"
+
+# Git
+alias gp="git pull"
+alias gc="git commit -m"
+alias gcm="git checkout main"
+alias grom="git rebase origin master"
+alias grc="git rebase --continue"
+alias gra="git rebase --abort"
+alias espidf='. "$HOME/esp/esp-idf/export.sh"'
+alias delete="shred -zvu -n 5"
+alias port="ss -tulpn | grep "
+alias l="eza -lam --icons=auto"
+alias ll="eza -lamhUuH --icons=auto --git"
+alias t="eza -a -T -L 2 --icons=auto"
+alias pp="pass-cli"
+alias ppsd="pass-cli run --env-file .env -- yarn start:dev"
+alias ppd="pass-cli run --env-file .env -- yarn dev"
+
+
+alias trade="$HOME/Jts/tws"
+
+alias agent='OPENROUTER_API_KEY=$(pass var/openrouter) OPENAI_API_KEY=$(pass var/open-ai-key-crush) crush'
+
+alias sncEdit="nvi /home/tsorabel/Sync/work/SnC/commands/developers-scripts/justfile"
+alias snc="just -f /home/tsorabel/Sync/work/SnC/commands/developers-scripts/justfile"
+#
+# # ---------- Security-sensitive vars ----------
+# # Removed: calling pass on every shell is slow.
+# # Export them on demand in aliases as you already do (ai, agent).
+nvim() {
+  # [[ -z "$OPENAI_API_KEY" ]] && export OPENAI_API_KEY=$(pass var/open-ai-key)
+  [[ -z "$COPILOT_API_KEY" ]] && export COPILOT_API_KEY=$(pass var/github-copilot-key)
+  [[ -z "$NPM_TOKEN" ]] && export NPM_TOKEN=$(pass var/gitlab)
+  nvm --version > /dev/null 2>&1
+  command nvim "$@"
+}
+alias n=nvim
+alias nv=nvim
+alias nvi=nvim
+
+# Load API keys 0.1 seconds after shell startup
+
+# Load API keys on shell startup
+# # ---------- Optional profiling footer ----------
+# if [[ -n $ZSH_PROFILE ]]; then zprof; fi
+# zprof
+# AUTO cd
+setopt AUTO_CD
+
+# --- Prefix history search on Up/Down (type a prefix, then arrow Up) ---
+autoload -Uz history-beginning-search-backward history-beginning-search-forward
+function _history-prefix-search-up() {
+  if [[ -z $BUFFER ]]; then
+    zle up-line-or-history
+  else
+    zle history-beginning-search-backward
+  fi
+}
+function _history-prefix-search-down() {
+  if [[ -z $BUFFER ]]; then
+    zle down-line-or-history
+  else
+    zle history-beginning-search-forward
+  fi
+}
+zle -N _history-prefix-search-up
+zle -N _history-prefix-search-down
+bindkey '^[[A' _history-prefix-search-up
+bindkey '^[[B' _history-prefix-search-down
+
+# # Also bind terminfo sequences if available
+
+source "$HOME/.oh-my-zsh/plugins/history-substring-search/history-substring-search.zsh"
+export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=black,fg=white,bold'
+export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white'
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+if (( ${+terminfo[kcuu1]} )); then bindkey "${terminfo[kcuu1]}" history-substring-search-up; fi
+if (( ${+terminfo[kcud1]} )); then bindkey "${terminfo[kcud1]}" history-substring-search-down; fi
+
+# --- Unified history (Oh My Zsh style) ---
+HISTFILE=${ZDOTDIR:-$HOME}/.zsh_history
+HISTSIZE=100000
+SAVEHIST=100000
+
+setopt HIST_IGNORE_DUPS        # drop immediately previous duplicate
+setopt HIST_IGNORE_SPACE       # commands starting with space not saved
+setopt HIST_VERIFY             # edit recalled history line before execution if modified with !:s etc.
+setopt HIST_REDUCE_BLANKS
+setopt HIST_FIND_NO_DUPS       # skip duplicates in search results
+setopt SHARE_HISTORY           # share across sessions (implies APPEND_HISTORY)
+setopt INC_APPEND_HISTORY      # append each command right after execution
+setopt EXTENDED_HISTORY        # timestamps+durations in file
+# (Optional) setopt HIST_EXPIRE_DUPS_FIRST  # expire oldest dups first when trimming
+# (Optional) setopt HIST_IGNORE_ALL_DUPS    # keep only first occurrence overall (more aggressive)
+
+# Ensure zle widgets see updated history immediately
+fc -p "${HISTFILE}"  # push local history context tied to same file (defensive)
+
+alias gs="git status"
+
+. "$HOME/.local/share/../bin/env"
