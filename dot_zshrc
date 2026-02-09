@@ -11,6 +11,7 @@ export BUN_INSTALL="$HOME/.bun"
 export TMUXIFIER_LAYOUT_PATH="$HOME/.config/tmux/layouts"
 export IDF_PATH="$HOME/esp/esp-idf"
 export STARSHIP_CONFIG="$HOME/.config/startship/starship.toml"
+export PROTON_PASS_DISABLE_TELEMETRY=1
 #
 # # PATH (unique, ordered once)
 typeset -U path
@@ -174,6 +175,7 @@ alias t="eza -a -T -L 2 --icons=auto"
 alias pp="pass-cli"
 alias ppsd="pass-cli run --env-file .env -- yarn start:dev"
 alias ppd="pass-cli run --env-file .env -- yarn dev"
+alias ppf='v=$(pass-cli vault list | fzf --height=40% --layout=reverse) && [ -n "$v" ] && vn=$(echo "$v" | sed "s/.*]: \(.*\)/\1/") && vid=$(echo "$v" | sed "s/.*\[\(.*\)\].*/\1/") && i=$(pass-cli item list "$vn" | fzf --height=40% --layout=reverse) && [ -n "$i" ] && iid=$(echo "$i" | sed "s/.*\[\(.*\)\].*/\1/") && pass-cli item view "pass://$vid/$iid/password" | copy'
 
 
 alias trade="$HOME/Jts/tws"
