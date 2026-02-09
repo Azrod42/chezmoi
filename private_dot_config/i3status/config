@@ -39,8 +39,19 @@ memory {
         format_degraded = "MEMORY < %available"
 }
 
+# battery all {
+#         format = "%status %percentage %remaining"
+# }
 battery all {
-        format = "%status %percentage %remaining"
+        format = "%status (%percentage) %remaining %emptytime"
+        format_down = "No battery"
+        status_chr = "⚡ CHR"
+        status_bat = "🔋 BAT"
+        status_unk = "? UNK"
+        status_full = "🤤 FULL AS FU"
+        status_idle = "☻ IDLE"
+        path = "/sys/class/power_supply/BAT%d/uevent"
+        low_threshold = 10
 }
 # general {
 #         colors = true
