@@ -1,5 +1,5 @@
 [window]
-opacity = 0
+opacity = 1
 decorations = "none"
 
 [font]
@@ -36,9 +36,10 @@ style = "Italic"
 # white = "#8d8d8d"
 
 [colors.primary]
-background = '#0c0c16'
-# background = '#1a1b26' -- tokio night
+background = '#1a1b26'
 foreground = '#a9b1d6'
+# background = '#0c0c16'
+# background = '#a28089'
 
 # Normal colors
 [colors.normal]
