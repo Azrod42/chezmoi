@@ -184,6 +184,8 @@ alias agent='OPENROUTER_API_KEY=$(pass var/openrouter) OPENAI_API_KEY=$(pass var
 
 alias sncEdit="nvi /home/tsorabel/Sync/work/SnC/commands/developers-scripts/justfile"
 alias snc="just -f /home/tsorabel/Sync/work/SnC/commands/developers-scripts/justfile"
+
+alias avante='nvim -c "lua vim.defer_fn(function()require(\"avante.api\").zen_mode()end, 100)"'
 #
 # # ---------- Security-sensitive vars ----------
 # # Removed: calling pass on every shell is slow.
