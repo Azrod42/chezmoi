@@ -311,5 +311,6 @@ bar {
     separator_symbol ⁞
 }
 
+exec_always --no-startup-id xmodmap ~/.Xmodmap
 
 
