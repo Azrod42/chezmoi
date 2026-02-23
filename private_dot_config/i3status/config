@@ -11,7 +11,7 @@ general {
   colors = true
   color_good = "#50FA7B"
   color_degraded = "#F1FA8C"
-  interval = 5
+  interval = 1
   color_bad = "#FF5555"
 }
 
@@ -48,7 +48,7 @@ battery all {
         status_chr = "⚡ CHR"
         status_bat = "🔋 BAT"
         status_unk = "? UNK"
-        status_full = "🤤 FULL AS FU"
+        status_full = "BATTERY IS FULL AS FU 🤤"
         status_idle = "☻ IDLE"
         path = "/sys/class/power_supply/BAT%d/uevent"
         low_threshold = 10
