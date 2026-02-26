@@ -110,6 +110,8 @@ _tmuxifier_init() {
 tmuxifier() { _tmuxifier_init; command tmuxifier "$@"; }
 tmux() { _tmuxifier_init; command tmux "$@"; }
 #
+#
+export PROTON_PASS_KEY_PROVIDER=fs
 # # ---------- Aliases ----------
 alias ssnc='xrandr --output eDP --auto --left-of HDMI-A-1-0'
 alias sncOff='xrandr --output eDP --off'
@@ -121,6 +123,8 @@ alias screen-b="xrandr --output DP-2 --mode 1920x1080 --rate 120 --below HDMI-2 
 alias screen-3="xrandr --output HDMI-1 --mode 1920x1080 --rate 120 --left-of DP-2 --auto --rotate normal"
 alias screen-share="xrandr --output HDMI-2 --mode 1920x1080 --rate 120 --same-as DP-2 && xrandr --output HDMI-2 --mode 1920x1080 --rate 120 --rotate inverted"
 alias screen-normal="screen-t && screen-b"
+
+
 
 
 # Common aliases
@@ -175,6 +179,7 @@ alias pp="pass-cli"
 alias ppsd="pass-cli run --env-file .env -- yarn start:dev"
 alias ppd="pass-cli run --env-file .env -- yarn dev"
 alias bwss="export BWS_ACCESS_TOKEN=$(pass-cli item view "pass://SnC/bws/token")"
+alias pp-login="pass-cli logout --force &&  pass-cli login"
 
 
 alias trade="$HOME/Jts/tws"
@@ -259,4 +264,4 @@ fc -p "${HISTFILE}"  # push local history context tied to same file (defensive)
 
 alias gs="git status"
 
-. "$HOME/.local/share/../bin/env"
+# . "$HOME/.local/share/../bin/env"
