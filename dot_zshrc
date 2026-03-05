@@ -180,6 +180,7 @@ alias ppsd="pass-cli run --env-file .env -- yarn start:dev"
 alias ppd="pass-cli run --env-file .env -- yarn dev"
 alias bwss="export BWS_ACCESS_TOKEN=$(pass-cli item view "pass://SnC/bws/token")"
 alias pp-login="pass-cli logout --force &&  pass-cli login"
+alias bwst="export BWS_ACCESS_TOKEN=$(pass-cli item view "pass://SnC/bws/token")"
 
 
 alias trade="$HOME/Jts/tws"
