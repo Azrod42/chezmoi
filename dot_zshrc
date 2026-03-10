@@ -187,7 +187,6 @@ export PROTON_PASS_KEY_PROVIDER=fs
 pass-cli login
 pass-cli info"
 
-
 alias trade="$HOME/Jts/tws"
 
 alias agent='OPENROUTER_API_KEY=$(pass var/openrouter) OPENAI_API_KEY=$(pass var/open-ai-key-crush) crush'
