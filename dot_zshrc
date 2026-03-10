@@ -175,12 +175,17 @@ alias port="ss -tulpn | grep "
 alias l="eza -lam --icons=auto"
 alias ll="eza -lamhUuH --icons=auto --git"
 alias t="eza -a -T -L 2 --icons=auto"
+alias j="just"
 alias pp="pass-cli"
 alias ppsd="pass-cli run --env-file .env -- yarn start:dev"
 alias ppd="pass-cli run --env-file .env -- yarn dev"
 alias bwss="export BWS_ACCESS_TOKEN=$(pass-cli item view "pass://SnC/bws/token")"
 alias pp-login="pass-cli logout --force &&  pass-cli login"
 alias bwst="export BWS_ACCESS_TOKEN=$(pass-cli item view "pass://SnC/bws/token")"
+alias pp-reset="rm -rf ~/.local/share/proton-pass-cli/.session
+export PROTON_PASS_KEY_PROVIDER=fs
+pass-cli login
+pass-cli info"
 
 
 alias trade="$HOME/Jts/tws"
