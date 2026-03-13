@@ -176,20 +176,43 @@ alias l="eza -lam --icons=auto"
 alias ll="eza -lamhUuH --icons=auto --git"
 alias t="eza -a -T -L 2 --icons=auto"
 alias j="just"
-alias pp="pass-cli"
-alias ppsd="pass-cli run --env-file .env -- yarn start:dev"
-alias ppd="pass-cli run --env-file .env -- yarn dev"
-alias bwss="export BWS_ACCESS_TOKEN=$(pass-cli item view "pass://SnC/bws/token")"
-alias pp-login="pass-cli logout --force &&  pass-cli login"
-alias bwst="export BWS_ACCESS_TOKEN=$(pass-cli item view "pass://SnC/bws/token")"
-alias pp-reset="rm -rf ~/.local/share/proton-pass-cli/.session
-export PROTON_PASS_KEY_PROVIDER=fs
-pass-cli login
-pass-cli info"
+
+_snc_prepare() {
+  export BWS_ACCESS_TOKEN="$(pass-cli item view 'pass://SnC/bws/token')"
+  export NPM_TOKEN="$(pass-cli item view 'pass://cli/gitlab-token/key')"
+}
+
+_bwss() {
+  export BWS_ACCESS_TOKEN="$(pass-cli item view 'pass://SnC/bws/token')"
+}
+
+_bwst() {
+  export BWS_ACCESS_TOKEN="$(pass-cli item view 'pass://SnC/bws/token')"
+}
+
+_pp() {
+  pass-cli "$@"
+}
+
+_pp_login() {
+  pass-cli logout --force && pass-cli login
+}
+
+_pp_reset() {
+  rm -rf ~/.local/share/proton-pass-cli/.session
+  export PROTON_PASS_KEY_PROVIDER=fs
+  pass-cli login
+  pass-cli info
+}
+
+alias pp='_pp'
+alias snc-prepare='_snc_prepare'
+alias bwss='_bwss'
+alias bwst='_bwst'
+alias pp-login='_pp_login'
+alias pp-reset='_pp_reset'
 
 alias trade="$HOME/Jts/tws"
-
-alias agent='OPENROUTER_API_KEY=$(pass var/openrouter) OPENAI_API_KEY=$(pass var/open-ai-key-crush) crush'
 
 alias sncEdit="nvi /home/tsorabel/Sync/work/SnC/commands/developers-scripts/justfile"
 alias snc="just -f /home/tsorabel/Sync/work/SnC/commands/developers-scripts/justfile"
@@ -198,9 +221,8 @@ alias snc="just -f /home/tsorabel/Sync/work/SnC/commands/developers-scripts/just
 # # Removed: calling pass on every shell is slow.
 # # Export them on demand in aliases as you already do (ai, agent).
 nvim() {
-  # [[ -z "$OPENAI_API_KEY" ]] && export OPENAI_API_KEY=$(pass var/open-ai-key)
-  [[ -z "$COPILOT_API_KEY" ]] && export COPILOT_API_KEY=$(pass var/github-copilot-key)
-  [[ -z "$NPM_TOKEN" ]] && export NPM_TOKEN=$(pass var/gitlab)
+  [[ -z "$COPILOT_API_KEY" ]] && export COPILOT_API_KEY=$(pass-cli item view "pass://cli/github-copilot/key")
+  [[ -z "$NPM_TOKEN" ]] && export NPM_TOKEN=$(pass-cli item view "pass://cli/gitlab-token/key")
   nvm --version > /dev/null 2>&1
   command nvim "$@"
 }
