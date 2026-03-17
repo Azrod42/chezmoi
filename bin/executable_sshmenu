@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+shopt -s nullglob globstar
+
+if [[ -n $WAYLAND_DISPLAY ]]; then
+	dmenu=dmenu-wl
+	xdotool="ydotool type --file -"
+elif [[ -n $DISPLAY ]]; then
+	dmenu=dmenu
+	xdotool="xdotool type --clearmodifiers --file -"
+else
+	echo "Error: No Wayland or X11 display detected" >&2
+	exit 1
+fi
+
+tmux_items=("Home-pc" "Home-server" "VPS" "SnC-Support-server" "SnC-Mac-mini")
+
+selected_session=$(printf '%s\n' "${tmux_items[@]}" | "$dmenu" "$@")
+
+[[ -n $selected_session ]] || exit
+
+if [[ $selected_session == "Home-pc" ]]; then
+	ssh tsorabel@82.64.183.64 -p 2222
+elif [[ $selected_session == "Home-server" ]]; then
+	# ssh home@192.168.1.166
+	ssh home@82.64.183.64
+elif [[ $selected_session == "SnC-Support-server" ]]; then
+	ssh snc@smartandconnective.pro.dns-orange.fr -p 26662
+elif [[ $selected_session == "SnC-Mac-mini" ]]; then
+	ssh smartandconnective@smartandconnective.pro.dns-orange.fr -p 6969
+elif [[ $selected_session == "VPS" ]]; then
+  ssh ubuntu@145.239.141.234
+else
+	echo Unknow input 
+fi
+
