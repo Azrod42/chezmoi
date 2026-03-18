@@ -29,7 +29,7 @@ elif [[ $selected_session == "SnC-Support-server" ]]; then
 elif [[ $selected_session == "SnC-Mac-mini" ]]; then
 	ssh smartandconnective@smartandconnective.pro.dns-orange.fr -p 6969
 elif [[ $selected_session == "VPS" ]]; then
-  ssh ubuntu@145.239.141.234
+  ssh ubuntu@tsorabel
 else
 	echo Unknow input 
 fi

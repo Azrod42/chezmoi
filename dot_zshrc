@@ -165,6 +165,7 @@ alias vpnRestart="vpnoff && vpn"
 # Git
 alias gp="git pull"
 alias gc="git commit -m"
+alias gs="git status"
 alias gcm="git checkout main"
 alias grom="git rebase origin master"
 alias grc="git rebase --continue"
@@ -289,6 +290,11 @@ setopt EXTENDED_HISTORY        # timestamps+durations in file
 # Ensure zle widgets see updated history immediately
 fc -p "${HISTFILE}"  # push local history context tied to same file (defensive)
 
-alias gs="git status"
+
+export PNPM_HOME="/home/tsorabel/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
 
 # . "$HOME/.local/share/../bin/env"
