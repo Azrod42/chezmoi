@@ -27,7 +27,7 @@ elif [[ $selected_session == "Home-server" ]]; then
 elif [[ $selected_session == "SnC-Support-server" ]]; then
 	ssh snc@smartandconnective.pro.dns-orange.fr -p 26662
 elif [[ $selected_session == "SnC-Mac-mini" ]]; then
-	ssh smartandconnective@smartandconnective.pro.dns-orange.fr -p 6969
+	ssh smartandconnective@smartconnectives-mac-mini
 elif [[ $selected_session == "VPS" ]]; then
   ssh ubuntu@tsorabel
 else
