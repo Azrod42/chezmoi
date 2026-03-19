@@ -29,7 +29,7 @@ elif [[ $selected_session == "SnC-Support-server" ]]; then
 elif [[ $selected_session == "SnC-Mac-mini" ]]; then
 	ssh smartandconnective@smartconnectives-mac-mini
 elif [[ $selected_session == "VPS" ]]; then
-  ssh ubuntu@tsorabel
+  ssh ubuntu@vps
 else
 	echo Unknow input 
 fi
