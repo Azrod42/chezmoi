@@ -291,10 +291,11 @@ setopt EXTENDED_HISTORY        # timestamps+durations in file
 fc -p "${HISTFILE}"  # push local history context tied to same file (defensive)
 
 
+# pnpm
 export PNPM_HOME="/home/tsorabel/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
-
-# . "$HOME/.local/share/../bin/env"
+# pnpm end
+export PATH="/home/tsorabel/.devcontainers/bin:$PATH"

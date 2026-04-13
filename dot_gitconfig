@@ -1,0 +1,13 @@
+[user]
+	email = tom.sorabella@gmail.com
+	name = tom.sorabella
+[core]
+  pager = delta
+[pull]
+	rebase = true
+[interactive]
+  diffFilter = delta --color-only --diff-so-fancy --$(xctl theme)
+[delta]
+  navigate = true
+  line-numbers = true
+  side-by-side = true
