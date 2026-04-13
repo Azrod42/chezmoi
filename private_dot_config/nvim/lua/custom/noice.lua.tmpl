@@ -2,10 +2,10 @@ return {
   'folke{{ .chezmoi.pathSeparator }}noice.nvim',
   event = 'VeryLazy',
   opts = {
-    -- {{ .chezmoi.command }} any options here
+    -- edit any options here
   },
   dependencies = {
-    -- if you lazy-load any plugin below, make sure to {{ .chezmoi.command }} proper `module="..."` entries
+    -- if you lazy-load any plugin below, make sure to edit proper `module="..."` entries
     'MunifTanjim{{ .chezmoi.pathSeparator }}nui.nvim',
     -- OPTIONAL{{ .chezmoi.pathListSeparator }}
     --   `nvim-notify` is only needed, if you want to use the notification view.
@@ -28,7 +28,7 @@ return {
         command_palette = true, -- position the cmdline and popupmenu together
         long_message_to_split = true, -- long messages will be sent to a split
         inc_rename = false, -- enables an input dialog for inc-rename.nvim
-        lsp_doc_border = false, -- {{ .chezmoi.command }} a border to hover docs and signature help
+        lsp_doc_border = false, -- edit a border to hover docs and signature help
       },
       routes = {
         {

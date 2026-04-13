@@ -1,8 +1,17 @@
-vim.filetype.{{ .chezmoi.command }} {
-  extension = {
-    ['http'] = 'http',
-  },
-}
+if vim.filetype and vim.filetype.{{ .chezmoi.command }} then
+  vim.filetype.{{ .chezmoi.command }} {
+    extension = {
+      http = 'http',
+    },
+  }
+else
+  vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
+    pattern = '*.http',
+    callback = function()
+      vim.bo.filetype = 'http'
+    end,
+  })
+end
 
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'http' },

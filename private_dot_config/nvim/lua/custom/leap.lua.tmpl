@@ -2,7 +2,7 @@ return {
   url = 'https{{ .chezmoi.pathListSeparator }}{{ .chezmoi.pathSeparator }}{{ .chezmoi.pathSeparator }}codeberg.org{{ .chezmoi.pathSeparator }}andyg{{ .chezmoi.pathSeparator }}leap.nvim',
   config = function()
     local leap = require 'leap'
-    -- leap.{{ .chezmoi.command }}_default_mappings()
+    -- leap.edit_default_mappings()
     leap.opts.case_sensitive = true
 
     vim.keymap.set({ 'n', 'x', 'o', 'v' }, 'm', '<Plug>(leap-forward)')

@@ -7,7 +7,7 @@ return {
     local harpoon = require 'harpoon'
     harpoon{{ .chezmoi.pathListSeparator }}setup {}
     vim.keymap.set({ 'n' }, '<leader>a', function()
-      harpoon{{ .chezmoi.pathListSeparator }}list(){{ .chezmoi.pathListSeparator }}{{ .chezmoi.command }}()
+      harpoon{{ .chezmoi.pathListSeparator }}list(){{ .chezmoi.pathListSeparator }}edit()
     end, { desc = '[A]ppend File to harpoon' })
     vim.keymap.set('n', '<C-e>', function()
       harpoon.ui{{ .chezmoi.pathListSeparator }}toggle_quick_menu(harpoon{{ .chezmoi.pathListSeparator }}list())
