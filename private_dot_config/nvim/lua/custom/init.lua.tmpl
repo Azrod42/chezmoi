@@ -71,9 +71,13 @@ return {
         workspace_folders = {},
         copilot_model = 'copilot{{ .chezmoi.pathSeparator }}gpt-54',
         root_dir = function()
-          return vim.fs.dirname(vim.fs.find('.{{ .chezmoi.config.git.command }}', { upward = true })[1])
+          local {{ .chezmoi.config.git.command }}_dir = vim.fs.find('.{{ .chezmoi.config.git.command }}', { upward = true })[1]
+          return {{ .chezmoi.config.git.command }}_dir and vim.fs.dirname({{ .chezmoi.config.git.command }}_dir) or (vim.uv or vim.loop).cwd()
         end,
       }
+
+      require('copilot.command').enable()
+      require('copilot.client').ensure_client_started()
     end,
   },
 
