@@ -1,0 +1,14 @@
+return {
+  {
+    'windwp{{ .chezmoi.pathSeparator }}nvim-ts-autotag',
+    ft = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'html', 'markdown' },
+    config = function()
+      require('nvim-ts-autotag').setup()
+    end,
+  },
+  {
+    'pmizio{{ .chezmoi.pathSeparator }}typescript-tools.nvim',
+    dependencies = { 'nvim-lua{{ .chezmoi.pathSeparator }}plenary.nvim', 'neovim{{ .chezmoi.pathSeparator }}nvim-lspconfig' },
+    opts = {},
+  },
+}

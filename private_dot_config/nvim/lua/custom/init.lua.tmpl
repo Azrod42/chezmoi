@@ -1,0 +1,142 @@
+-- You can {{ .chezmoi.command }} your own plugins here or in other files in this directory!
+--  I promise not to create any merge conflicts in this directory {{ .chezmoi.pathListSeparator }})
+--
+-- See the kickstart.nvim README for more information
+return {
+  -- waka-time
+  { 'wakatime{{ .chezmoi.pathSeparator }}vim-wakatime', lazy = false },
+
+  -- multi line
+  { 'mg979{{ .chezmoi.pathSeparator }}vim-visual-multi', lazy = false },
+
+  { 'ziglang{{ .chezmoi.pathSeparator }}zig.vim' },
+
+  {
+    'vuki656{{ .chezmoi.pathSeparator }}package-info.nvim',
+    ft = '{{ .chezmoi.config.format }}',
+    dependencies = { 'MunifTanjim{{ .chezmoi.pathSeparator }}nui.nvim' },
+    config = function()
+      require('package-info').setup {
+        hide_up_to_date = true,
+      }
+    end,
+  },
+
+  {
+    'zbirenbaum{{ .chezmoi.pathSeparator }}copilot.lua',
+    config = function()
+      require('copilot').setup {
+        panel = {
+          enabled = true,
+          {{ .chezmoi.config.color }}_refresh = false,
+          keymap = {
+            jump_prev = '[[',
+            jump_next = ']]',
+            accept = '<CR>',
+            refresh = 'gr',
+            open = '<M-CR>',
+          },
+          layout = {
+            position = 'bottom', -- | top | left | right | horizontal | vertical
+            ratio = 0.4,
+          },
+        },
+        suggestion = {
+          enabled = true,
+          {{ .chezmoi.config.color }}_trigger = true,
+          hide_during_completion = true,
+          debounce = 75,
+          trigger_on_accept = true,
+          keymap = {
+            accept = '<Tab>',
+            accept_word = false,
+            accept_line = false,
+            next = '<M-n>',
+            prev = '<M-p>',
+            dismiss = '<C-]>',
+          },
+        },
+        filetypes = {
+          yaml = false,
+          markdown = false,
+          help = false,
+          gitcommit = false,
+          gitrebase = false,
+          hgcommit = false,
+          svn = false,
+          cvs = false,
+          ['.'] = false,
+        },
+        copilot_node_command = 'node', -- Node.js version must be > 20
+        workspace_folders = {},
+        copilot_model = 'copilot{{ .chezmoi.pathSeparator }}gpt-54',
+        root_dir = function()
+          return vim.fs.dirname(vim.fs.find('.{{ .chezmoi.config.git.command }}', { upward = true })[1])
+        end,
+      }
+    end,
+  },
+
+  -- {
+  --   'github{{ .chezmoi.pathSeparator }}copilot.vim',
+  --   config = function()
+  --     require('copilot').setup {
+  --       suggestion = { enabled = false },
+  --       panel = { enabled = false },
+  --     }
+  --     vim.keymap.set({ 'n' }, '<leader>cd', '<cmd>Copilot disable<CR>', { desc = '[C]opilot [D]isable' })
+  --     vim.keymap.set({ 'n' }, '<leader>ce', '<cmd>Copilot enable<CR>', { desc = '[C]opilot [E]nable' })
+  --   end,
+  -- },
+  {
+    'folke{{ .chezmoi.pathSeparator }}lazydev.nvim',
+    ft = 'lua',
+    cmd = 'LazyDev',
+    opts = {
+      dependencies = {
+        -- Manage libuv types with lazy. Plugin will never be loaded
+        { 'Bilal2453{{ .chezmoi.pathSeparator }}luvit-meta', lazy = true },
+      },
+      library = {
+        { path = '~{{ .chezmoi.pathSeparator }}Documents{{ .chezmoi.pathSeparator }}avante.nvim{{ .chezmoi.pathSeparator }}lua', words = { 'avante' } },
+        { path = 'luvit-meta{{ .chezmoi.pathSeparator }}library', words = { 'vim%.uv' } },
+      },
+    },
+  },
+  {
+    'NeogitOrg{{ .chezmoi.pathSeparator }}neogit',
+    lazy = true,
+    dependencies = {
+      'nvim-lua{{ .chezmoi.pathSeparator }}plenary.nvim', -- required
+
+      -- Only one of these is needed.
+      'sindrets{{ .chezmoi.pathSeparator }}diffview.nvim', -- optional
+      'esmuellert{{ .chezmoi.pathSeparator }}codediff.nvim', -- optional
+
+      -- Only one of these is needed.
+      'nvim-telescope{{ .chezmoi.pathSeparator }}telescope.nvim', -- optional
+      'ibhagwan{{ .chezmoi.pathSeparator }}fzf-lua', -- optional
+      'nvim-mini{{ .chezmoi.pathSeparator }}mini.pick', -- optional
+      'folke{{ .chezmoi.pathSeparator }}snacks.nvim', -- optional
+    },
+    cmd = 'Neogit',
+    keys = {
+      { '<leader>gg', '<cmd>Neogit<cr>', desc = 'Show Neogit UI' },
+    },
+  },
+  -- {
+  --   'zbirenbaum{{ .chezmoi.pathSeparator }}copilot-cmp',
+  --   config = function()
+  --     require('copilot_cmp').setup()
+  --   end,
+  -- },
+
+  -- {
+  --   'sindrets{{ .chezmoi.pathSeparator }}diffview.nvim',
+  --   config = function()
+  --     vim.keymap.set({ 'n' }, '<leader>dm', '<cmd>DiffviewOpen<CR>', { desc = '[D]iff [M]aster' })
+  --     vim.keymap.set({ 'n' }, '<leader>dc', '<cmd>DiffviewClose<CR>', { desc = '[D]iff [C]lose' })
+  --     vim.keymap.set({ 'n' }, '<leader>df', '<cmd>DiffviewFileHistory %<CR>', { desc = '[D]iff [F]ile' })
+  --   end,
+  -- },
+}

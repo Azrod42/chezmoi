@@ -1,0 +1,10 @@
+return {
+  'folke{{ .chezmoi.pathSeparator }}lazydev.nvim',
+  ft = 'lua',
+  opts = {
+    library = {
+      -- Load luvit types when the `vim.uv` word is found
+      { path = 'luvit-meta{{ .chezmoi.pathSeparator }}library', words = { 'vim%.uv' } },
+    },
+  },
+}

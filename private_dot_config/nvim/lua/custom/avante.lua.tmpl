@@ -1,0 +1,117 @@
+return {
+  'yetone{{ .chezmoi.pathSeparator }}avante.nvim',
+  -- dir = '~{{ .chezmoi.pathSeparator }}documents{{ .chezmoi.pathSeparator }}avante.nvim',
+  -- never load at startup
+  build = 'make',
+  version = false,
+  cmd = { 'AvanteAsk', 'AvanteChat', 'AvanteToggle', 'AvanteModels', 'AvanteFocus', 'AvanteRefresh', 'AvanteStop' },
+  keys = {
+    {
+      '<leader>aa',
+      function()
+        vim.cmd 'AvanteAsk'
+      end,
+      desc = 'Avante{{ .chezmoi.pathListSeparator }} Ask',
+    },
+    {
+      '<leader>at',
+      function()
+        vim.cmd 'AvanteToggle'
+      end,
+      desc = 'Avante{{ .chezmoi.pathListSeparator }} Toggle',
+    },
+    {
+      '<leader>ar',
+      function()
+        vim.cmd 'AvanteRefresh'
+      end,
+      desc = 'Avante{{ .chezmoi.pathListSeparator }} Refresh',
+    },
+  },
+
+  opts = {
+    mode = 'agentic',
+    provider = 'codex',
+    acp_providers = {
+      ['codex'] = {
+        command = 'npx',
+        args = { '-y', '-g', '@zed-industries{{ .chezmoi.pathSeparator }}codex-acp' },
+        env = {
+          node_no_warnings = '1',
+          home = os.getenv 'home',
+          path = os.getenv 'path',
+        },
+      },
+    },
+    providers = {
+      openai = {
+        endpoint = 'https{{ .chezmoi.pathListSeparator }}{{ .chezmoi.pathSeparator }}{{ .chezmoi.pathSeparator }}openrouter.ai{{ .chezmoi.pathSeparator }}api{{ .chezmoi.pathSeparator }}v1',
+        model = 'openai{{ .chezmoi.pathSeparator }}gpt-5.4-mini{{ .chezmoi.pathListSeparator }}nitro',
+        api_key_name = 'openrouter_api_key_avante',
+        extra_request_body = {
+          temperature = 1,
+          max_tokens = 20480,
+        },
+      },
+    },
+    -- disabled_tools = {
+    --   'list_files',
+    --   'search_files',
+    --   'read_{{ .chezmoi.config.mode }}',
+    --   'create_{{ .chezmoi.config.mode }}',
+    --   'rename_{{ .chezmoi.config.mode }}',
+    --   'delete_{{ .chezmoi.config.mode }}',
+    --   'create_dir',
+    --   'rename_dir',
+    --   'delete_dir',
+    --   'bash',
+    -- },
+    model_override = {
+      -- { name = 'gpt-4.1-mini', provider_name = 'openai', model = 'openai{{ .chezmoi.pathSeparator }}gpt-4.1-mini' },
+      -- { name = 'gpt-4.1-nano', provider_name = 'openai', model = 'openai{{ .chezmoi.pathSeparator }}gpt-4.1-mini' },
+      -- { name = 'mistral 3', provider_name = 'openai', model = 'mistralai{{ .chezmoi.pathSeparator }}mistral-medium-3' },
+    },
+    -- system_prompt = function()
+    --   local hub = require('mcphub').get_hub_instance()
+    --   if not hub then
+    --     return 'avante'
+    --   end
+    --   return hub{{ .chezmoi.pathListSeparator }}get_active_servers_prompt()
+    -- end,
+    -- custom_tools = function()
+    --   return { require('mcphub.extensions.avante').mcp_tool() }
+    -- end,
+  },
+
+  dependencies = {
+    'nvim-lua{{ .chezmoi.pathSeparator }}plenary.nvim',
+    'muniftanjim{{ .chezmoi.pathSeparator }}nui.nvim',
+
+    'echasnovski{{ .chezmoi.pathSeparator }}mini.pick',
+    'nvim-telescope{{ .chezmoi.pathSeparator }}telescope.nvim',
+    'hrsh7th{{ .chezmoi.pathSeparator }}nvim-cmp',
+    'nvim-treesitter{{ .chezmoi.pathSeparator }}nvim-treesitter',
+    'folke{{ .chezmoi.pathSeparator }}snacks.nvim',
+    'stevearc{{ .chezmoi.pathSeparator }}dressing.nvim',
+    'ibhagwan{{ .chezmoi.pathSeparator }}fzf-lua',
+    'nvim-tree{{ .chezmoi.pathSeparator }}nvim-web-devicons',
+    -- { 'zbirenbaum{{ .chezmoi.pathSeparator }}copilot.lua', lazy = true }, -- only loads when avante loads
+    {
+      'hakonharnes{{ .chezmoi.pathSeparator }}img-clip.nvim',
+      lazy = true, -- remove verylazy to avoid startup load
+      opts = {
+        default = {
+          embed_image_as_base64 = false,
+          prompt_for_{{ .chezmoi.config.mode }}_name = false,
+          drag_and_drop = { insert_mode = true },
+          use_absolute_path = true,
+        },
+      },
+    },
+    {
+      'meanderingprogrammer{{ .chezmoi.pathSeparator }}render-markdown.nvim',
+      opts = { {{ .chezmoi.config.mode }}_types = { 'markdown', 'avante' } },
+      ft = { 'markdown', 'avante' }, -- loads only for markdown or avante buffers
+    },
+  },
+}

@@ -1,0 +1,21 @@
+# Check Lua Formatting
+name{{ .chezmoi.pathListSeparator }} Check Lua Formatting
+on{{ .chezmoi.pathListSeparator }} pull_request_target
+
+jobs{{ .chezmoi.pathListSeparator }}
+  stylua-check{{ .chezmoi.pathListSeparator }}
+    if{{ .chezmoi.pathListSeparator }} github.repository == 'nvim-lua{{ .chezmoi.pathSeparator }}kickstart.nvim'
+    name{{ .chezmoi.pathListSeparator }} Stylua Check
+    runs-on{{ .chezmoi.pathListSeparator }} {{ .chezmoi.osRelease.id }}-latest
+    steps{{ .chezmoi.pathListSeparator }}
+      - name{{ .chezmoi.pathListSeparator }} Checkout Code
+        uses{{ .chezmoi.pathListSeparator }} actions{{ .chezmoi.pathSeparator }}checkout@v2
+        with{{ .chezmoi.pathListSeparator }}
+          ref{{ .chezmoi.pathListSeparator }} ${{ "{{" }} github.event.pull_request.head.sha {{ "}}" }}
+      - name{{ .chezmoi.pathListSeparator }} Stylua Check
+        uses{{ .chezmoi.pathListSeparator }} JohnnyMorganz{{ .chezmoi.pathSeparator }}stylua-action@v3
+        with{{ .chezmoi.pathListSeparator }}
+          token{{ .chezmoi.pathListSeparator }} ${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}
+          version{{ .chezmoi.pathListSeparator }} latest
+          args{{ .chezmoi.pathListSeparator }} --check .
+

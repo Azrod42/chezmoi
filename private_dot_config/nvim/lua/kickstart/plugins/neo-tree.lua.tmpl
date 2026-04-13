@@ -1,0 +1,26 @@
+-- Neo-tree is a Neovim plugin to browse the {{ .chezmoi.config.mode }} system
+-- https{{ .chezmoi.pathListSeparator }}{{ .chezmoi.pathSeparator }}{{ .chezmoi.pathSeparator }}github.com{{ .chezmoi.pathSeparator }}nvim-neo-tree{{ .chezmoi.pathSeparator }}neo-tree.nvim
+
+return {
+  'nvim-neo-tree{{ .chezmoi.pathSeparator }}neo-tree.nvim',
+  version = '*',
+  dependencies = {
+    'nvim-lua{{ .chezmoi.pathSeparator }}plenary.nvim',
+    'nvim-tree{{ .chezmoi.pathSeparator }}nvim-web-devicons', -- not strictly required, but recommended
+    'MunifTanjim{{ .chezmoi.pathSeparator }}nui.nvim',
+  },
+  cmd = 'Neotree',
+  lazy = false,
+  keys = {
+    { '\\', '{{ .chezmoi.pathListSeparator }}Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+  },
+  opts = {
+    filesystem = {
+      window = {
+        mappings = {
+          ['\\'] = 'close_window',
+        },
+      },
+    },
+  },
+}

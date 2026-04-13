@@ -1,0 +1,65 @@
+return {
+  'ThePrimeagen{{ .chezmoi.pathSeparator }}harpoon',
+  branch = 'harpoon2',
+
+  dependencies = { 'nvim-lua{{ .chezmoi.pathSeparator }}plenary.nvim' },
+  config = function()
+    local harpoon = require 'harpoon'
+    harpoon{{ .chezmoi.pathListSeparator }}setup {}
+    vim.keymap.set({ 'n' }, '<leader>a', function()
+      harpoon{{ .chezmoi.pathListSeparator }}list(){{ .chezmoi.pathListSeparator }}{{ .chezmoi.command }}()
+    end, { desc = '[A]ppend File to harpoon' })
+    vim.keymap.set('n', '<C-e>', function()
+      harpoon.ui{{ .chezmoi.pathListSeparator }}toggle_quick_menu(harpoon{{ .chezmoi.pathListSeparator }}list())
+    end, { desc = '[H]arpoon quick menu' })
+
+    vim.keymap.set('n', '<C-t>', function()
+      harpoon{{ .chezmoi.pathListSeparator }}list(){{ .chezmoi.pathListSeparator }}select(1)
+    end)
+    vim.keymap.set('n', '<C-f>', function()
+      harpoon{{ .chezmoi.pathListSeparator }}list(){{ .chezmoi.pathListSeparator }}select(2)
+    end)
+    vim.keymap.set('n', '<C-g>', function()
+      harpoon{{ .chezmoi.pathListSeparator }}list(){{ .chezmoi.pathListSeparator }}select(3)
+    end)
+    vim.keymap.set('n', '<C-v>', function()
+      harpoon{{ .chezmoi.pathListSeparator }}list(){{ .chezmoi.pathListSeparator }}select(4)
+    end)
+    vim.keymap.set('n', '<C-b>', function()
+      harpoon{{ .chezmoi.pathListSeparator }}list(){{ .chezmoi.pathListSeparator }}select(5)
+    end)
+    vim.keymap.set('n', '<C-s>', function()
+      harpoon{{ .chezmoi.pathListSeparator }}list(){{ .chezmoi.pathListSeparator }}select(6)
+    end)
+
+    -- Toggle previous & next buffers stored within Harpoon list
+    -- vim.keymap.set('n', '<C-p>', function()
+    --   harpoon{{ .chezmoi.pathListSeparator }}list(){{ .chezmoi.pathListSeparator }}next()
+    -- end)
+    -- vim.keymap.set('n', '<C-n>', function()
+    --   harpoon{{ .chezmoi.pathListSeparator }}list(){{ .chezmoi.pathListSeparator }}prev()
+    -- end)
+    local conf = require('telescope.config').values
+    local function toggle_telescope(harpoon_files)
+      local {{ .chezmoi.config.mode }}_paths = {}
+      for _, item in ipairs(harpoon_files.items) do
+        table.insert({{ .chezmoi.config.mode }}_paths, item.value)
+      end
+
+      require('telescope.pickers')
+        .new({}, {
+          prompt_title = 'Harpoon',
+          finder = require('telescope.finders').new_table {
+            results = {{ .chezmoi.config.mode }}_paths,
+          },
+          previewer = conf.{{ .chezmoi.config.mode }}_previewer {},
+          sorter = conf.generic_sorter {},
+        })
+        {{ .chezmoi.pathListSeparator }}find()
+    end
+
+    vim.keymap.set('n', '<C-q>', function()
+      toggle_telescope(harpoon{{ .chezmoi.pathListSeparator }}list())
+    end, { desc = 'Open harpoon window' })
+  end,
+}

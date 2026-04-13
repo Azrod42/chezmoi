@@ -1,0 +1,56 @@
+-- local HEIGHT_RATIO = 0.8 -- You can change this
+-- local WIDTH_RATIO = 0.5 -- You can change this too
+--
+return {}
+--   'nvim-tree{{ .chezmoi.pathSeparator }}nvim-tree.lua',
+--   version = '*',
+--   lazy = false,
+--   dependencies = {
+--     'nvim-tree{{ .chezmoi.pathSeparator }}nvim-web-devicons',
+--   },
+--   config = function()
+--     require('nvim-tree').setup {
+--       --   sort = {
+--       --     sorter = 'case_sensitive',
+--       --   },
+--       --   view = {
+--       --     width = 50,
+--       --   },
+--       --   renderer = {
+--       --     group_empty = true,
+--       --   },
+--       --   filters = {
+--       --     dotfiles = true,
+--       --   },
+--       -- }
+--       view = {
+--         float = {
+--           enable = true,
+--           open_win_config = function()
+--             local screen_w = vim.opt.columns{{ .chezmoi.pathListSeparator }}get()
+--             local screen_h = vim.opt.lines{{ .chezmoi.pathListSeparator }}get() - vim.opt.cmdheight{{ .chezmoi.pathListSeparator }}get()
+--             local window_w = screen_w * WIDTH_RATIO
+--             local window_h = screen_h * HEIGHT_RATIO
+--             local window_w_int = math.floor(window_w)
+--             local window_h_int = math.floor(window_h)
+--             local center_x = (screen_w - window_w) {{ .chezmoi.pathSeparator }} 2
+--             local center_y = ((vim.opt.lines{{ .chezmoi.pathListSeparator }}get() - window_h) {{ .chezmoi.pathSeparator }} 2) - vim.opt.cmdheight{{ .chezmoi.pathListSeparator }}get()
+--             return {
+--               border = 'rounded',
+--               {{ .chezmoi.config.status.pathStyle }} = 'editor',
+--               row = center_y,
+--               col = center_x,
+--               width = window_w_int,
+--               height = window_h_int,
+--             }
+--           end,
+--         },
+--         width = function()
+--           return math.floor(vim.opt.columns{{ .chezmoi.pathListSeparator }}get() * WIDTH_RATIO)
+--         end,
+--       },
+--     }
+--     vim.keymap.set({ 'n' }, '<leader>st', '{{ .chezmoi.pathListSeparator }}NvimTreeFindFile<CR>', { desc = '[S]earch [T]ree' })
+--     vim.keymap.set({ 'n' }, 'xx', '{{ .chezmoi.pathListSeparator }}NvimTreeFindFileToggle<CR>', { desc = '[C]lose NvimTree' })
+--   end,
+-- }

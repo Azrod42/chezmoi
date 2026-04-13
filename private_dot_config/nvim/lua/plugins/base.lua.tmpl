@@ -1,0 +1,6 @@
+return {
+  { 'Bilal2453{{ .chezmoi.pathSeparator }}luvit-meta', lazy = true },
+
+  -- Highlight todo, notes, etc in comments
+  { 'folke{{ .chezmoi.pathSeparator }}todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua{{ .chezmoi.pathSeparator }}plenary.nvim' }, opts = { signs = false } },
+}
