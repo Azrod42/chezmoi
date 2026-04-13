@@ -145,11 +145,12 @@ require('lazy').setup({
 })
 
 local map = vim.keymap.set
+local buffer = require 'utils.buffer'
 
 -- Set current wordl
 map({ 'n' }, '<leader>cw', '{{ .chezmoi.pathListSeparator }}%s{{ .chezmoi.pathSeparator }}\\<<C-r><C-w>\\>{{ .chezmoi.pathSeparator }}<C-r><C-w>{{ .chezmoi.pathSeparator }}gI<Left><Left><Left>', { desc = '[C]ut [W]orld' })
 -- Close buffer
-map({ 'n' }, '<leader>x', '<cmd>bd<CR>', { desc = 'Close buffer' })
+map({ 'n' }, '<leader>x', buffer.close_current_buffer, { desc = 'Close buffer' })
 -- Create new vertical buffer
 map({ 'n' }, '<leader>wb', '<cmd>vs<CR>', { desc = 'New [W]orkspace [B]uffer' })
 --Screenshot with carbon now

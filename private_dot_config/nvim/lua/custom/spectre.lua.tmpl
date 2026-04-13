@@ -4,7 +4,7 @@ return {
   dependencies = { 'nvim-lua{{ .chezmoi.pathSeparator }}plenary.nvim' },
   cmd = 'Spectre',
   config = function()
-    vim.keymap.set('n', '<leader>S', '<cmd>lua require("spectre").toggle()<CR>', {
+    vim.keymap.set('n', '<leader>se', '<cmd>lua require("spectre").toggle()<CR>', {
       desc = 'Toggle Spectre',
     })
     vim.keymap.set('n', '<leader>sw', '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', {
