@@ -15,7 +15,7 @@ general {
   color_bad = "#FF5555"
 }
 
-order += "battery all"
+# order += "battery all"
 order += "disk /"
 order += "load"
 order += "memory"
@@ -42,17 +42,17 @@ memory {
 # battery all {
 #         format = "%status %percentage %remaining"
 # }
-battery all {
-        format = "%status (%percentage) %remaining %emptytime"
-        format_down = "No battery"
-        status_chr = "⚡ CHR"
-        status_bat = "🔋 BAT"
-        status_unk = "? UNK"
-        status_full = "BATTERY IS FULL AS FU 🤤"
-        status_idle = "☻ IDLE"
-        path = "/sys/class/power_supply/BAT%d/uevent"
-        low_threshold = 10
-}
+# battery all {
+#         format = "%status (%percentage) %remaining %emptytime"
+#         format_down = "No battery"
+#         status_chr = "⚡ CHR"
+#         status_bat = "🔋 BAT"
+#         status_unk = "? UNK"
+#         status_full = "BATTERY IS FULL AS FU 🤤"
+#         status_idle = "☻ IDLE"
+#         path = "/sys/class/power_supply/BAT%d/uevent"
+#         low_threshold = 10
+# }
 # general {
 #         colors = true
 #         interval = 5
