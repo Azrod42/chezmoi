@@ -112,6 +112,7 @@ tmux() { _tmuxifier_init; command tmux "$@"; }
 #
 #
 export PROTON_PASS_KEY_PROVIDER=fs
+export PROTON_PASS_DISABLE_TELEMETRY=1
 # # ---------- Aliases ----------
 alias ssnc='xrandr --output eDP --auto --left-of HDMI-A-1-0'
 alias sncOff='xrandr --output eDP --off'
