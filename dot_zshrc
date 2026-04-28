@@ -144,7 +144,7 @@ alias ccd="cd $HOME/SnC/web/"
 alias cccd="cd $HOME/Documents/Cealum/"
 alias cdRest="cd $HOME/Sync/work/rest/"
 
-alias ai='OPENAI_KEY=$(pass var/open-ai-key) ai'
+alias ai='ai'
 alias aiCheat='ai p cheat -p -a '
 
 bindkey -s ^f "~/.config/flash\n"
