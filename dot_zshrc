@@ -218,6 +218,9 @@ alias trade="$HOME/Jts/tws"
 
 alias sncEdit="nvi /home/tsorabel/Sync/work/SnC/commands/developers-scripts/justfile"
 alias snc="just -f /home/tsorabel/Sync/work/SnC/commands/developers-scripts/justfile"
+
+alias kubectl="kubecolor"
+
 #
 # # ---------- Security-sensitive vars ----------
 # # Removed: calling pass on every shell is slow.
